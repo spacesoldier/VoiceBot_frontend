@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Re:Face</title>
+
+	<link href="../css/bootstrap.min.css" rel="stylesheet">
+	<link href="../css/reface.css" rel="stylesheet">
+
+	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+
+<div class="container">
+	<div class="col-md-12">
+		<div class="row">
+			<h2>Загрузи изображение</h2>
+
+			<form method="post" action="http://www.roboflunky.ru/post_images" enctype="multipart/form-data">
+				<div class="input-group image-preview">
+					<!--<input placeholder="" type="text" class="form-control image-preview-filename" disabled="disabled">-->
+
+					<span class="input-group-btn">
+
+						<div class="btn btn-default image-preview-input">
+							<span class="glyphicon glyphicon-folder-open"></span>
+							<span class="image-preview-input-title">Выбрать</span>
+							<input type="file" id="files" accept="image/png, image/jpeg, image/gif" name="files[]"/>
+						</div>
+
+						<button type="submit" class="btn btn-labeled btn-default">
+							<span class="btn-label">
+								<i class="glyphicon glyphicon-upload"></i>
+							</span>Загрузить
+						</button>
+					</span>
+				</div>
+			</form>
+		</div>
+
+		<div class="row output-list">
+
+			<output id="list"></output>
+		</div>
+	</div>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/reface.js"></script>
+
+</body>
+</html>
