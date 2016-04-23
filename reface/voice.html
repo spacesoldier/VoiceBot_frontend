@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="http://cdn.voximplant.com/voximplant.min.js"></script>
+	<script type="text/javascript">
+		var initialized = false,
+				loggedIn = false,
+				connected = false,
+				voxAPI = VoxImplant.getInstance();
+
+		// Add event listeners
+		voxAPI.addEventListener(VoxImplant.Events.SDKReady, handleSDKReady);
+		voxAPI.addEventListener(VoxImplant.Events.ConnectionEstablished, handleConnectionEstablished);
+		voxAPI.addEventListener(VoxImplant.Events.AuthResult, handleAuthResult);
+
+		function handleSDKReady() {
+			initialized = true;
+			logMessage("VoxImplant SDK ready");
+			// Connection with VoxImplant Cloud can be established now
+			voxAPI.connect();
+		}
+
+		function handleConnectionEstablished() {
+			connected = true;
+			logMessage("Connection established");
+			login();
+		}
+
+		function handleAuthResult(e) {
+			logMessage("AuthResult: "+e.result);
+			if (e.result) {
+				// Logged in successfully
+				loggedIn = true;
+				makeCall();
+			} else {
+				logMessage("Authorization failed. Please specify correct username and password");
+			}
+		}
+
+		function login(){
+			// Authorization required before we can use other functions
+			voxAPI.login("call.test@test.sultanus.voximplant.com", "123456");
+		}
+
+		function logMessage(msg) {
+			document.getElementById("log").innerHTML += msg + "\n";
+		}
+
+		function makeCall(){
+			// Specify your number here - Application Rule Pattern describes which VoxEngine scenario should be launched
+			var call = voxAPI.call("79060488721");
+			// Add event listeners for call events
+			call.addEventListener(VoxImplant.CallEvents.Connected, handleCallConnected);
+			call.addEventListener(VoxImplant.CallEvents.Failed, handleCallFailed);
+			call.addEventListener(VoxImplant.CallEvents.Disconnected, handleCallDisconnected);
+		}
+
+		function handleCallConnected() {
+			logMessage("Call Connected");
+		}
+
+		function handleCallFailed(e) {
+			logMessage("Call Failed. Code: "+e.code+" Reason: "+e.reason);
+		}
+
+		function handleCallDisconnected() {
+			logMessage("Call Disconnected");
+		}
+
+		function testCall() {
+			// Initialize SDK if not it's not initialized yet
+			if (!initialized) voxAPI.init({micRequired: true});
+			else {
+				// Establish connection with VoxImplant Cloud if it's not established yet
+				if (!voxAPI.connected()) voxAPI.connect();
+				else {
+					// Login if not logged in yet, otherwise - make a call
+					if (!loggedIn) login();
+					else makeCall();
+				}
+			}
+		}
+	</script>
+</head>
+<body>
+<a href="javascript:testCall()">Make Call</a><br/>
+<textarea style="height: 400px" id="log"></textarea>
+</body>
+</html>
+
+
+
+<!--<html>-->
+<!--<head>-->
+	<!--<script type="text/javascript" src="http://cdn.voximplant.com/voximplant.min.js"></script>-->
+	<!--<script type="text/javascript">-->
+		<!--var initialized = false, // SDK загружено-->
+				<!--loggedIn = false, // пользователь авторизован-->
+				<!--connected = false, // получено соединение с VoxImplant сервером-->
+				<!--voxImplant = VoxImplant.getInstance();-->
+
+		<!--// добавляем прослушивателей основных событий-->
+		<!--// событие загрузки SDK-->
+		<!--voxImplant.addEventListener(VoxImplant.Events.SDKReady, handleSDKReady);-->
+		<!--// событие установки соединения с сервером VoxImplant-->
+		<!--voxImplant.addEventListener(VoxImplant.Events.ConnectionEstablished, handleConnectionEstablished);-->
+		<!--// событие авторизации пользователя на сервере VoxImplant-->
+		<!--voxImplant.addEventListener(VoxImplant.Events.AuthResult, handleAuthResult);-->
+
+		<!--// SDK загружен, соединяемся с VoxImplant сервером-->
+		<!--function handleSDKReady() {-->
+			<!--initialized = true;-->
+			<!--voxImplant.connect();-->
+		<!--}-->
+
+		<!--// соединились с VoxImplant сервером успешно, авторизуем юзера-->
+		<!--function handleConnectionEstablished() {-->
+			<!--connected = true;-->
+			<!--login();-->
+		<!--}-->
+
+		<!--// проверяем статус авторизации-->
+		<!--function handleAuthResult(e) {-->
+			<!--if (e.result) {-->
+				<!--// Авторизовались успешно-->
+				<!--loggedIn = true;-->
+				<!--makeCall();-->
+			<!--}-->
+		<!--}-->
+
+		<!--// проводим авторизацию-->
+		<!--function login(){-->
+			<!--// данные созданного пользователя и приложения-->
+			<!--voxImplant.login("call.test@testapp.sultanus.voximplant.com", "123456");-->
+		<!--}-->
+
+		<!--function makeCall(){-->
+			<!--var call = voxImplant.call("79060488721"); // ваш номер для дозвона-->
+		<!--}-->
+
+		<!--function testCall() {-->
+			<!--// если SDK не инициализирован - проводим процесс-->
+			<!--if (!initialized) voxImplant.init();-->
+			<!--else {-->
+				<!--// если не установлено соединение с сервером VoxImplant - устанавливаем-->
+				<!--if (!voxImplant.connected()) voxImplant.connect();-->
+				<!--else {-->
+					<!--// если юзер не авторизован - авторизуем, если авторизован - звоним-->
+					<!--if (!loggedIn) login();-->
+					<!--else makeCall();-->
+				<!--}-->
+			<!--}-->
+		<!--}-->
+	<!--</script>-->
+<!--</head>-->
+<!--<body>-->
+<!--<a href="javascript:testCall()">Позвони мне, позвони!</a><br/>-->
+<!--</body>-->
+<!--</html>-->
