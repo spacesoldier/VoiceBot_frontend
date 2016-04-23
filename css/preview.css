@@ -1,0 +1,26 @@
+.preview div {
+	text-align: center;
+	display: block;
+	margin-top: 50px;
+}
+
+.preview div h2 {
+	text-transform: uppercase;
+	padding-bottom: 10%;
+}
+
+.preview .wrapper {
+	background-color: #faf7f3;
+	padding-top: 20px;
+	height: 450px;
+}
+
+.preview a:hover {
+	text-decoration: none;
+}
+
+.preview a:hover .wrapper {
+	text-decoration: none;
+	background-color: #f4f1ed;
+	color: #131313;
+}
