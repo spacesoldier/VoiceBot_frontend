@@ -108,9 +108,9 @@
 <script src="js/bootstrap.min.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
-		$(".main-block").height($(window).height - 200);
+		$(".main-block").height($(window).height() - 200);
 		$(window).resize(function(){
-				$(".main-block").height($(window).height - 200);
+				$(".main-block").height($(window).height() - 200);
 			});
 		
 	});
