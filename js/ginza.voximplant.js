@@ -70,7 +70,10 @@ $(document).ready(function() {
                 setTimeout(poll, 500);
             } else {
                 parseStep(json);
-                if(json.step_number == -100) return;
+                if(json.step_number == -100) {
+                    $('.finish').html('Вы забронировали столик в ресторане. Ждем вас.');
+                    return;
+                }
                 setTimeout(poll, 2000);
             }
         });
@@ -85,16 +88,32 @@ $(document).ready(function() {
             var gid = $('.gid');
             var choise = getChoiceInfo(json);
             console.log(choise);
-            //gid.append('<li>' + choise +'</li>');
             switch (currentStep) {
                 case 0:
                 {
-                    gid.append('<li>Кухня: ' + choise + '</li>');
+                    //gid.append('<li>Кухня: ' + choise + '</li>');
                     break;
                 }
                 case 1:
                 {
-                    gid.append('<li>Ресторан: ' + decodeURIComponent(escape(json.restaurant.name)) + '</li>');
+                    var rest = getRestaurantById(json.restaurant.rest_id);
+                    console.log(rest);
+
+                    var content =
+                        '<div class="restaurant">' +
+                        '<div class="title">' + rest.title + '</div>' +
+                        '<img src="http://iginza.ru/images/w250/' + rest.logo + '">' +
+                        '<div class="address"><b>Адрес: </b>' + rest.contacts_address + '</div>' +
+                        '<div class="contacts"><b>Телефоны: </b>' + [rest.contacts_phone, rest.contacts_phone_service].join(', ') + '</div>';
+
+                    if(rest.panorama.length > 0) {
+                        content += '<div class="meta"><a target="_blank" href="' + rest.panorama + '" class="btn btn-sm btn-primary">Посмотреть панораму</a></div>'
+                    }
+
+                    content += '</div>';
+
+                    gid.append('<li>' + content + '</li>');
+                    //gid.append('<li>Ресторан: ' + decodeURIComponent(escape(json.restaurant.rest_name)) + '</li>');
                     break;
                 }
                 case 2:
@@ -109,7 +128,7 @@ $(document).ready(function() {
                 }
                 case 4:
                 {
-                    gid.append('<li>Сколько человек: ' + choise + '</li>');
+                    gid.append('<li>Количество персон: ' + choise + '</li>');
                     break;
                 }
                 case 5:
@@ -150,5 +169,21 @@ $(document).ready(function() {
         var text = decodeURIComponent(escape(json.choice));
         console.log(text);
         return text;
+    }
+
+    function getRestaurantById(id) {
+        var r;
+        $.ajax({
+            async: false,
+            type: "GET",
+            url: "http://www.roboflunky.ru/getRest(" + id + ").json",
+            //contentType: 'application/json; charset=utf-8',
+            //crossDomain: true
+        }).done(function (msg) {
+            r = msg.response[0];
+
+        });
+
+        return r;
     }
 });

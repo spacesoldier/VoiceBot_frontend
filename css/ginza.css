@@ -2,6 +2,36 @@
 	margin: 0 10px;
 }
 
+h2 {
+	padding-bottom: 20px;
+}
+
 label {
 	font-size: 16px;
+}
+
+.gid li {
+	border-bottom: 1px solid rgba(51, 46, 46, 0.24);
+	padding: 5px 10px;
+	font-size: 16px;
+}
+
+.gid {
+	list-style: none;
+	padding: 0 !important;
+}
+
+.restaurant .title {
+	font-size: 20px;
+	border-bottom: 2px solid rgba(37, 35, 35, 0.17);
+	padding-left: 5px;
+	text-transform: uppercase;
+}
+
+.restaurant img {
+	margin: 20px 0;
+}
+
+.restaurant .meta {
+	margin-top: 10px;
 }
