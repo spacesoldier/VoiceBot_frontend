@@ -71,7 +71,6 @@ $(document).ready(function() {
             } else {
                 parseStep(json);
                 if(json.step_number == -100) {
-                    $('.finish').html('Вы забронировали столик в ресторане. Ждем вас.');
                     return;
                 }
                 setTimeout(poll, 2000);
@@ -118,17 +117,17 @@ $(document).ready(function() {
                 }
                 case 2:
                 {
-                    gid.append('<li>Дата заказа: ' + choise + '</li>');
+                    gid.append('<li><b>Дата заказа:</b> ' + choise + '</li>');
                     break;
                 }
                 case 3:
                 {
-                    gid.append('<li>Время заказа: ' + choise + '</li>');
+                    gid.append('<li><b>Время заказа:</b> ' + choise + '</li>');
                     break;
                 }
                 case 4:
                 {
-                    gid.append('<li>Количество персон: ' + choise + '</li>');
+                    gid.append('<li><b>Количество персон:</b> ' + choise + '</li>');
                     break;
                 }
                 case 5:
@@ -146,7 +145,7 @@ $(document).ready(function() {
                     break;
                 }
                 case 8: {
-                    // Оплата сейчас
+                    gid.append('<li><h4>Столик зарезервирован. Будем рады вас видеть!</h4></li>');
                     break;
                 }
             }
