@@ -1,35 +1,51 @@
-<!DOCTYPE html>
 <html>
 <head>
-	<script type="text/javascript" src="http://cdn.voximplant.com/voximplant.min.js"></script>
+	<!--<script type="text/javascript" src="//cdn.voximplant.com/voximplant.min.js"></script>-->
+	<script type="text/javascript" src="../js/voximplant.kawai.js"></script>
+	<!--<script type="text/javascript" src="//cdn.voximplant.com/voximplant-1.0.min.js"></script>-->
 	<script type="text/javascript">
 		var initialized = false,
 				loggedIn = false,
 				connected = false,
-				voxAPI = VoxImplant.getInstance();
+				/** var voxImplant VoxImplant */
+				voxImplant = VoxImplant.getInstance();
+
 
 		// Add event listeners
-		voxAPI.addEventListener(VoxImplant.Events.SDKReady, handleSDKReady);
-		voxAPI.addEventListener(VoxImplant.Events.ConnectionEstablished, handleConnectionEstablished);
-		voxAPI.addEventListener(VoxImplant.Events.AuthResult, handleAuthResult);
+		voxImplant.addEventListener(VoxImplant.Events.SDKReady, handleSDKReady);
+		voxImplant.addEventListener(VoxImplant.Events.ConnectionEstablished, handleConnectionEstablished);
+		voxImplant.addEventListener(VoxImplant.Events.ConnectionClosed, handleConnectionClosed);
+		voxImplant.addEventListener(VoxImplant.Events.ConnectionFailed, handleConnectionFailed);
+		//		voxImplant.addEventListener(VoxImplant.Events.AuthResult, handleAuthResult);
 
-		function handleSDKReady() {
-			initialized = true;
-			logMessage("VoxImplant SDK ready");
-			// Connection with VoxImplant Cloud can be established now
-			voxAPI.connect();
+		voxImplant.init();
+
+
+		function handleConnectionClosed() {
+			logMessage("Failed Connect: network problems");
+			console.log(this);
+		}
+
+		function handleConnectionFailed(e) {
+			logMessage("Failed Connect");
 		}
 
 		function handleConnectionEstablished() {
 			connected = true;
-			logMessage("Connection established");
-			login();
+			logMessage("VoxImplant SDK connect");
+			voxImplant.login("test2@testapp.sultanus.voximplant.com", "123456");
+		}
+
+		function handleSDKReady() {
+			initialized = true;
+			logMessage("VoxImplant SDK ready");
+			voxImplant.connect();
 		}
 
 		function handleAuthResult(e) {
 			logMessage("AuthResult: "+e.result);
 			if (e.result) {
-				// Logged in successfully
+// Logged in successfully
 				loggedIn = true;
 				makeCall();
 			} else {
@@ -37,19 +53,14 @@
 			}
 		}
 
-		function login(){
-			// Authorization required before we can use other functions
-			voxAPI.login("call.test@test.sultanus.voximplant.com", "123456");
-		}
-
 		function logMessage(msg) {
 			document.getElementById("log").innerHTML += msg + "\n";
 		}
 
 		function makeCall(){
-			// Specify your number here - Application Rule Pattern describes which VoxEngine scenario should be launched
-			var call = voxAPI.call("79060488721");
-			// Add event listeners for call events
+// Number isn't important - our simple VoxEngine script will just playback the audio file
+			var call = voxImplant.call("79060488721");
+// Add event listeners for call events
 			call.addEventListener(VoxImplant.CallEvents.Connected, handleCallConnected);
 			call.addEventListener(VoxImplant.CallEvents.Failed, handleCallFailed);
 			call.addEventListener(VoxImplant.CallEvents.Disconnected, handleCallDisconnected);
@@ -68,13 +79,13 @@
 		}
 
 		function testCall() {
-			// Initialize SDK if not it's not initialized yet
-			if (!initialized) voxAPI.init({micRequired: true});
+// Initialize SDK if not it's not initialized yet
+			if (!initialized) voxImplant.init();
 			else {
-				// Establish connection with VoxImplant Cloud if it's not established yet
-				if (!voxAPI.connected()) voxAPI.connect();
+// Establish connection with VoxImplant Cloud if it's not established yet
+				if (!voxImplant.connected()) voxImplant.connect();
 				else {
-					// Login if not logged in yet, otherwise - make a call
+// Login if not logged in yet, otherwise - make a call
 					if (!loggedIn) login();
 					else makeCall();
 				}
@@ -84,76 +95,95 @@
 </head>
 <body>
 <a href="javascript:testCall()">Make Call</a><br/>
-<textarea style="height: 400px" id="log"></textarea>
+<textarea style="height: 400px" id="log">
+</textarea>
 </body>
 </html>
 
-
-
-<!--<html>-->
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
 <!--<head>-->
-	<!--<script type="text/javascript" src="http://cdn.voximplant.com/voximplant.min.js"></script>-->
-	<!--<script type="text/javascript">-->
-		<!--var initialized = false, // SDK загружено-->
-				<!--loggedIn = false, // пользователь авторизован-->
-				<!--connected = false, // получено соединение с VoxImplant сервером-->
-				<!--voxImplant = VoxImplant.getInstance();-->
+<!--<meta charset="utf-8">-->
+<!--<meta http-equiv="X-UA-Compatible" content="IE=edge">-->
+<!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+<!--<title>Voximplant test page</title>-->
+<!--<link href="../css/bootstrap.min.css" rel="stylesheet">-->
+<!--<script src="//cdn.voximplant.com/voximplant.min.js"></script>-->
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
+<!--<script src="../js/voximplant.js"></script>-->
+<!--<script>-->
+<!--var voximplantClient = new VoximaplantClient('test2@testapp.sultanus.voximplant.com', '123456');-->
+<!--voximplantClient.onInitializationCompletedEvent = function () {-->
+<!--$('#log').append('<p class="bg-warning">Инициализиация завершена</p>');-->
+<!--callToNumber();-->
+<!--};-->
+<!--voximplantClient.onCallingStartedEvent = function () {-->
+<!--$('#call_to_num').removeClass('btn-success btn-warning').addClass('btn-danger');-->
+<!--$('#log').append('<p class="bg-danger">Звонок начался</p>');-->
+<!--};-->
+<!--voximplantClient.onCallingCompletedEvent = function () {-->
+<!--$('#call_to_num').removeClass('btn-danger btn-warning').addClass('btn-success');-->
+<!--$('#log').append('<p class="bg-success">Звонок завершен</p>');-->
+<!--};-->
 
-		<!--// добавляем прослушивателей основных событий-->
-		<!--// событие загрузки SDK-->
-		<!--voxImplant.addEventListener(VoxImplant.Events.SDKReady, handleSDKReady);-->
-		<!--// событие установки соединения с сервером VoxImplant-->
-		<!--voxImplant.addEventListener(VoxImplant.Events.ConnectionEstablished, handleConnectionEstablished);-->
-		<!--// событие авторизации пользователя на сервере VoxImplant-->
-		<!--voxImplant.addEventListener(VoxImplant.Events.AuthResult, handleAuthResult);-->
+<!--function callToNumber() {-->
+<!--if (voximplantClient.isCallingAllowed()) {-->
+<!--voximplantClient.callToNumber($('#phone_num').val());-->
+<!--} else {-->
+<!--var voximplantStatus = voximplantClient.getStatus();-->
+<!--if (voximplantStatus === voximplantClient.NOT_INTIALIZED) {-->
+<!--voximplantClient.init();-->
+<!--$('#call_to_num').removeClass('btn-success btn-danger').addClass('btn-warning');-->
+<!--$('#log').append('<p class="bg-warning">Начата инициализация</p>');-->
+<!--} else {-->
+<!--switch (voximplantStatus) {-->
+<!--case voximplantClient.INTIALIZED:-->
+<!--msg_text = 'Не удается сделать звонок. Нет доступа к микрофону';-->
+<!--break;-->
+<!--case voximplantClient.MIC_VERIFIED:-->
+<!--msg_text = 'Не удается сделать звонок. Нет соединения с сервером voximplant';-->
+<!--break;-->
+<!--case voximplantClient.CONNECTED:-->
+<!--msg_text = 'Не удается сделать звонок. Не удалось авторизоваться на сервере voximplant';-->
+<!--break;-->
+<!--case voximplantClient.CONNECTION_CLOSED:-->
+<!--msg_text = 'Не удается сделать звонок. Соединение с сервером voximplant закрыто. Пожалуйста, перезайдите в панель администратора и попробуйте снова.';-->
+<!--break;-->
+<!--}-->
+<!--alert(msg_text);-->
+<!--}-->
+<!--}-->
+<!--}-->
 
-		<!--// SDK загружен, соединяемся с VoxImplant сервером-->
-		<!--function handleSDKReady() {-->
-			<!--initialized = true;-->
-			<!--voxImplant.connect();-->
-		<!--}-->
-
-		<!--// соединились с VoxImplant сервером успешно, авторизуем юзера-->
-		<!--function handleConnectionEstablished() {-->
-			<!--connected = true;-->
-			<!--login();-->
-		<!--}-->
-
-		<!--// проверяем статус авторизации-->
-		<!--function handleAuthResult(e) {-->
-			<!--if (e.result) {-->
-				<!--// Авторизовались успешно-->
-				<!--loggedIn = true;-->
-				<!--makeCall();-->
-			<!--}-->
-		<!--}-->
-
-		<!--// проводим авторизацию-->
-		<!--function login(){-->
-			<!--// данные созданного пользователя и приложения-->
-			<!--voxImplant.login("call.test@testapp.sultanus.voximplant.com", "123456");-->
-		<!--}-->
-
-		<!--function makeCall(){-->
-			<!--var call = voxImplant.call("79060488721"); // ваш номер для дозвона-->
-		<!--}-->
-
-		<!--function testCall() {-->
-			<!--// если SDK не инициализирован - проводим процесс-->
-			<!--if (!initialized) voxImplant.init();-->
-			<!--else {-->
-				<!--// если не установлено соединение с сервером VoxImplant - устанавливаем-->
-				<!--if (!voxImplant.connected()) voxImplant.connect();-->
-				<!--else {-->
-					<!--// если юзер не авторизован - авторизуем, если авторизован - звоним-->
-					<!--if (!loggedIn) login();-->
-					<!--else makeCall();-->
-				<!--}-->
-			<!--}-->
-		<!--}-->
-	<!--</script>-->
+<!--$(document).ready(function () {-->
+<!--$('#call_to_num').click(function () {-->
+<!--if ($(this).hasClass('btn-success')) {-->
+<!--callToNumber();-->
+<!--} else if ($(this).hasClass('btn-danger')) {-->
+<!--voximplantClient.hangUp();-->
+<!--}-->
+<!--});-->
+<!--});-->
+<!--</script>-->
 <!--</head>-->
 <!--<body>-->
-<!--<a href="javascript:testCall()">Позвони мне, позвони!</a><br/>-->
+<!--<div class="container">-->
+<!--<div class="row" style="margin-top:20px;">-->
+<!--<div class="col-xs-4 col-sm-4 col-md-3 text-right">-->
+<!--Позвонить на номер:-->
+<!--</div>-->
+<!--<div class="col-xs-4 col-sm-4 col-md-3">-->
+<!--<input type="password" class="form-control" id="phone_num"/>-->
+<!--</div>-->
+<!--<div class="col-xs-4 col-sm-4 col-md-3">-->
+<!--<button type="button" class="btn btn-success" id="call_to_num"><span class="glyphicon glyphicon-earphone"></span></button>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="row" style="margin-top:20px;">-->
+<!--<div class="col-md-12" id="log">-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
 <!--</body>-->
 <!--</html>-->
+
