@@ -44,7 +44,7 @@
 												<div class="col-md-10 col-xs-10 col-sm-10 text-left">
 													<h2>
 														<font color="#FF8C00" style= "padding: 0px 0px 50px 0px">Первый</font>
-														<font color="#808080" style= "padding: 0px 0px 50px 0px">Представляет:</font>
+														<font color="#808080" style= "padding: 0px 0px 50px 0px">Представляет</font>
 													</h2>
 												</div>
 											</div>
@@ -57,19 +57,19 @@
 			</div>
 		</div>
 	
-	<div class="container-fluid" style="padding-top:120px; background-color: rgba(255,255,255,0.3)">
+	<div class="container-fluid" style="padding-top:130px; background-color: rgba(255,255,255,0.3)">
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-6 main-block">
 				<div class="container-fluid">
 					<div class="row">
-						<div class="col-md-12 text-center" style="background-color: rgba(255,255,255,0.1);">
+						<div class="col-md-12 text-center" style="background-color: rgba(255,255,255,0.2);">
 							<a href="ginza">
 								<h2>Ресторанный гид</h2>
 							</a>
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-md-12 text-center"style="background-color: rgba(255,255,255,0.1);">
+						<div class="col-md-12 text-center"style="background-color: rgba(255,255,255,0.2);">
 							<a href="ginza">
 								<img src="img/ginza-logo.png">
 							</a>
@@ -79,17 +79,17 @@
 				
 			</div>
 
-			<div class="col-md-6">
+			<div class="col-md-6 main-block">
 				<div class="container-fluid">
 					<div class="row">
-						<div class="col-md-12 text-center" style="background-color: rgba(255,255,255,0.1);">
+						<div class="col-md-12 text-center" style="background-color: rgba(255,255,255,0.2);">
 							<a href="reface">
 								<h2>Re:face</h2>
 							</a>
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-md-12 text-center" style="background-color: rgba(255,255,255,0.1);">
+						<div class="col-md-12 text-center" style="background-color: rgba(255,255,255,0.2);">
 							<a href="ginza">
 								<img src="img/platinental-logo.png">
 							</a>
@@ -106,5 +106,13 @@
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$(window).resize(function(){
+				$(".main-block").height($(window).height - 200);
+			});
+		
+	});
+</script>
 </body>
 </html>
