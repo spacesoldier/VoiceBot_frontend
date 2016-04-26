@@ -14,44 +14,34 @@ $(document).ready(function() {
             VoxApi = new ApiCall();
             VoxApi.remoteCall(phone.val());
             if(VoxApi.callSuccess == true) {
-                poll();
+                poll(VoxApi.uid);
             } else {
-                alert('Ошибка соединения с сервером. ВАРНИНГ!!!!111');
+                alert('Ошибка соединения с сервером.');
             }
         }
     });
 
     function ApiCall() {
         var _ = this;
-        var apiData = {
-            account_id: 479251,
-            api_key: 'edfaac20-1902-4744-9268-032d81e2ab78'
-        };
         var callData;
         this.callSuccess = false;
+        this.uid;
 
         this.remoteCall = function(number) {
             if(DEBUG == false) {
                 $.ajax({
                     async: false,
                     type: "GET",
-                    url: "https://api.voximplant.com/platform_api/StartScenarios/",
-                    data: {
-                        account_id: apiData.account_id,
-                        api_key: apiData.api_key,
-                        rule_id: 150585,
-                        script_custom_data: number
-                    }
+                    url: "http://www.roboflunky.ru/makeCall(" + number + ").json",
                 }).done(function (msg) {
                     callData = msg;
                     if(callData.result == 1) {
                         _.callSuccess = true;
+                        _.uid = callData.uid;
                     } else {
                         _.callSuccess = false;
                     }
                 });
-                console.log(apiData.account_id);
-                console.log(apiData.api_key);
             } else {
                 _.callSuccess = true;
             }
@@ -59,24 +49,26 @@ $(document).ready(function() {
 
     }
 
-    function poll() {
+    function poll(uid) {
         $.ajax({
             type: "GET",
-            url: "http://www.roboflunky.ru/getState(_).json",
-            //contentType: "text/html;charset=UTF-8"
+            url: "http://www.roboflunky.ru/getState(" + uid + ").json",
         }).done(function(json) {
             console.log(json);
             if(JSON.stringify(json) == '{}') {
-                setTimeout(poll, 500);
+                setTimeout(function() { poll(uid) }, 500);
             } else {
                 parseStep(json);
-                if(json.step_number == -100) {
+                if(json.step_number == -404 || json.step_number == -100) {
                     return;
                 }
-                setTimeout(poll, 2000);
+                setTimeout(function() { poll(uid) }, 2000);
             }
         });
     }
+
+
+    //console.log(bg.css('background-image'));
 
     var currentStep = -1;
 
@@ -84,55 +76,90 @@ $(document).ready(function() {
         console.log('Start parse');
         if(isChangedStep(json)) {
             console.log('step changed');
-            var gid = $('.gid');
             var choise = getChoiceInfo(json);
             console.log(choise);
-            switch (currentStep) {
+            switch (json.step_number) {//currentStep
                 case 0:
                 {
-                    //gid.append('<li>Кухня: ' + choise + '</li>');
+                    if(choise == -1) {
+                        addStepLoading(1, 'Процесс выбора ресторана');
+                        return;
+                    }
                     break;
                 }
                 case 1:
                 {
+                    if(choise == -1) {
+                        return;
+                    }
+
                     var rest = getRestaurantById(json.restaurant.rest_id);
                     console.log(rest);
 
+                    //var content =
+                    //    '<div class="restaurant">' +
+                    //    '<div class="title">' + rest.title + '</div>' +
+                    //    '<img src="http://iginza.ru/images/w250/' + rest.logo + '">' +
+                    //    '<div class="address"><b>Адрес: </b>' + rest.contacts_address + '</div>' +
+                    //    '<div class="contacts"><b>Телефоны: </b>' + [rest.contacts_phone, rest.contacts_phone_service].join(', ') + '</div>';
+
                     var content =
                         '<div class="restaurant">' +
-                        '<div class="title">' + rest.title + '</div>' +
-                        '<img src="http://iginza.ru/images/w250/' + rest.logo + '">' +
-                        '<div class="address"><b>Адрес: </b>' + rest.contacts_address + '</div>' +
-                        '<div class="contacts"><b>Телефоны: </b>' + [rest.contacts_phone, rest.contacts_phone_service].join(', ') + '</div>';
+                            '<img class="logo" src="http://iginza.ru/images/w250/' + rest.logo + '">' +
+                            '<div class="info">' +
+                                '<div class="title"><b>Наименование: </b>' + rest.title + '</div>' +
+                                '<div class="address"><b>Адрес: </b>' + rest.contacts_address + '</div>' +
+                                '<div class="contacts"><b>Телефоны: </b>' + [rest.contacts_phone, rest.contacts_phone_service].join(', ') + '</div>' +
+                            '</div>' +
+                        '</div>';
 
-                    if(rest.panorama.length > 0) {
-                        content += '<div class="meta"><a target="_blank" href="' + rest.panorama + '" class="btn btn-sm btn-primary">Посмотреть панораму</a></div>'
-                    }
+                    var bg = $('.background');
+                    bg.css({"background-image": 'url("http://iginza.ru/images/w2000-h2000/' + rest.cover + '")'});
 
-                    content += '</div>';
+                    //if(rest.panorama.length > 0) {
+                    //    content += '<div class="meta"><a target="_blank" href="' + rest.panorama + '" class="btn btn-sm btn-primary">Посмотреть панораму</a></div>'
+                    //}
+                    //
+                    //content += '</div>';
 
-                    gid.append('<li>' + content + '</li>');
-                    //gid.append('<li>Ресторан: ' + decodeURIComponent(escape(json.restaurant.rest_name)) + '</li>');
+                    addStep('Ресторан', 1, content);
                     break;
                 }
                 case 2:
                 {
-                    gid.append('<li><b>Дата заказа:</b> ' + choise + '</li>');
+                    if(choise == -1) {
+                        addStepLoading(2, 'Выбор даты');
+                        return;
+                    }
+                    addStep('Дата', 2, '<b>Дата заказа:</b> ' + choise);
                     break;
                 }
                 case 3:
                 {
-                    gid.append('<li><b>Время заказа:</b> ' + choise + '</li>');
+                    if(choise == -1) {
+                        addStepLoading(3, 'Выбор времени заказа');
+                        return;
+                    }
+                    addStep('Время', 3, '<b>Время заказа:</b> ' + choise);
+
                     break;
                 }
                 case 4:
                 {
-                    gid.append('<li><b>Количество персон:</b> ' + choise + '</li>');
+                    if(choise == -1) {
+                        addStepLoading(4, 'Выбор количества персон');
+                        return;
+                    }
+                    addStep('Персоны', 4, '<b>Количество персон:</b> ' + choise);
+
                     break;
                 }
                 case 5:
                 {
-                    //gid.append('<li>: ' + choise + '</li>');
+                    if(choise == -1) {
+                        addStepLoading(5, 'Окончание обработки заказа');
+                        return;
+                    }
                     break;
                 }
                 case 6:
@@ -142,10 +169,18 @@ $(document).ready(function() {
                 }
                 case 7: {
                     // Подтверждение заказа
-                    break;
+                }
+                case -100: {
+
                 }
                 case 8: {
-                    gid.append('<li><h4>Столик зарезервирован. Будем рады вас видеть!</h4></li>');
+
+                    if(choise == -1) {
+                        //addStepLoading(5, 'Окончание обработки заказа');
+                        return;
+                    }
+                    addStep('Спасибо за заказ', 5, '<b>Столик зарезервирован. Будем рады вас видеть!</b>');
+
                     break;
                 }
             }
@@ -156,12 +191,14 @@ $(document).ready(function() {
         var step = json.step_number;
         console.log('Step: ' + step);
         console.log('Current step: ' + currentStep);
-        if(step > currentStep) {
-            currentStep = step;
-            return true;
-        } else {
-            return false;
-        }
+        currentStep = step;
+        return true;
+        //if(step >= currentStep) {
+        //    currentStep = step;
+        //    return true;
+        //} else {
+        //    return false;
+        //}
     }
 
     function getChoiceInfo(json) {
@@ -170,19 +207,44 @@ $(document).ready(function() {
         return text;
     }
 
+    //console.log(getRestaurantById(61));;
+
     function getRestaurantById(id) {
+        var req = 'restaurants/get/' + id;
         var r;
         $.ajax({
             async: false,
             type: "GET",
-            url: "http://www.roboflunky.ru/getRest(" + id + ").json",
-            //contentType: 'application/json; charset=utf-8',
-            //crossDomain: true
+            url: "http://www.roboflunky.ru/ginzaAPI(" + req + ").json",
         }).done(function (msg) {
             r = msg.response[0];
-
         });
 
         return r;
+    }
+
+    function addStep(title, num, content) {
+        var steps = $('.steps');
+        var res;
+
+        if($('div').is('#step_id_' + num)) {
+            $('#step_id_' + num).html('<span class="number">' + num + '</span>' +
+                '<div class="title">' + title + '</div>' +
+                '<div class="content">' + content + '</div>');
+        } else {
+            var stepid = $('#step_id_' + num);
+
+            res = '<div class="step" id="step_id_' + num + '">' +
+                '<span class="number">' + num + '</span>' +
+                '<div class="title">' + title + '</div>' +
+                '<div class="content">' + content + '</div>' +
+                '</div>';
+
+            steps.append(res);
+        }
+    }
+
+    function addStepLoading(num, title) {
+        addStep(title + '... <span class="process loading"><img src="../img/loading.svg"></span>', num, '');
     }
 });

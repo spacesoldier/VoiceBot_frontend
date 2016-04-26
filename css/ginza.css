@@ -21,11 +21,26 @@ label {
 	padding: 0 !important;
 }
 
-.restaurant .title {
-	font-size: 20px;
-	border-bottom: 2px solid rgba(37, 35, 35, 0.17);
-	padding-left: 5px;
-	text-transform: uppercase;
+.restaurant {
+	font-size: 16px;
+	width: 100%;
+}
+
+.restaurant .logo {
+	float: left;
+	margin: 0 20px 20px 0;
+	display: block;
+}
+
+.restaurant .info {
+	width: 100%;
+}
+
+.restaurant > .title {
+	/*font-size: 20px;*/
+	/*border-bottom: 2px solid rgba(37, 35, 35, 0.17);*/
+	/*padding-left: 5px;*/
+	/*text-transform: uppercase;*/
 }
 
 .restaurant img {
@@ -34,4 +49,75 @@ label {
 
 .restaurant .meta {
 	margin-top: 10px;
+}
+
+
+/* Grid */
+
+.grid .background {
+	/*background-image: url("http://iginza.ru/images/w2000-h2000/cfde55b28f230a0534b9fbd00733a6eb.jpg");*/
+	width: 100%;
+	height: 1200px;
+	background-repeat: no-repeat;
+	background-clip: border-box;
+	background-size: cover;
+	background-position: center center;
+	opacity: 0.5;
+	margin-bottom: 100px;
+	position: absolute;
+	left: 0;
+	z-index: -20;
+	box-shadow: inset 0px 0px 50px rgb(24, 24, 24);
+}
+
+.steps {
+	padding: 20px 0;
+}
+
+.steps .step {
+	width: 100%;
+	padding: 30px;
+	border-radius: 5px;
+	background-color: rgba(255, 255, 255, 1);
+	margin: 20px 0;
+	font-size: 22px !important;
+}
+
+.steps .step .number {
+	font-size: 35px;
+	display: inline-block;
+	width: 50px;
+	height: 50px;
+	border-radius: 25px;
+	border: 3px solid #3c3c3c;
+	color: #3c3c3c;
+	text-align: center;
+	float: left;
+	position: relative;
+	top: -10px;
+	line-height: 43px;
+	margin-right: 20px;
+}
+
+.steps .step > .title {
+	display: block;
+}
+
+.steps .step .content {
+	display: inline-block;
+	width: 100%;
+	padding-left: 50px;
+	padding-right: 50px;
+	font-size: 14px;
+}
+
+.steps .step .process.loading {
+	float: right;
+	position: relative;
+	top: -5px;
+}
+
+.steps .step .process.loading img{
+	width: 50px;
+	height: 50px;
 }
